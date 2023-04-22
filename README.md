@@ -41,3 +41,9 @@ python3 manage.py migrate
 ```
 python3 manage.py runserver
 ```
+
+Ознакомиться с документацией проекта можно по адресу:
+
+```
+http://127.0.0.1:8000/redoc/
+```
