@@ -1,9 +1,20 @@
-from rest_framework.viewsets import ModelViewSet
-
+from django.shortcuts import get_object_or_404
+from rest_framework.filters import SearchFilter
+from rest_framework.mixins import CreateModelMixin, ListModelMixin
 from rest_framework.pagination import LimitOffsetPagination
-from posts.models import Post
+from rest_framework.viewsets import (GenericViewSet, ModelViewSet,
+                                     ReadOnlyModelViewSet)
+
 from .permissions import OwnerOrReadOnly, ReadOnly
-from .serializers import PostSerializer
+from posts.models import Group, Post, User
+from .serializers import (CommentSerializer, FollowSerializer, GroupSerializer,
+                          PostSerializer)
+
+
+class CreateListViewSet(CreateModelMixin,
+                        ListModelMixin,
+                        GenericViewSet):
+    pass
 
 
 class PostViewSet(ModelViewSet):
@@ -19,3 +30,43 @@ class PostViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class CommentViewSet(ModelViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = (OwnerOrReadOnly, )
+
+    def get_queryset(self):
+        post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
+        return post.comments.all()
+
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return (ReadOnly(),)
+        return super().get_permissions()
+
+    def perform_create(self, serializer):
+        post = get_object_or_404(Post, pk=self.kwargs.get('post_id'))
+        serializer.save(author=self.request.user, post=post)
+
+
+class GroupViewSet(ReadOnlyModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = ()
+
+
+class FollowViewSet(CreateListViewSet):
+    serializer_class = FollowSerializer
+    filter_backends = (SearchFilter,)
+    search_fields = ('following__username',)
+
+    def get_queryset(self):
+        return self.request.user.follower.all()
+
+    def perform_create(self, serializer):
+        following = get_object_or_404(
+            User,
+            username=serializer.initial_data.get('following')
+        )
+        serializer.save(user=self.request.user, following=following)
