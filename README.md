@@ -79,3 +79,17 @@ http://127.0.0.1:8000/redoc/
   ]
 }
 ```
+
+**GET** api/v1/posts/{post_id}/comments/
+```
+[
+  {
+    "id": 0,
+    "author": "string",
+    "text": "string",
+    "created": "2019-08-24T14:15:22Z",
+    "post": 0
+  }
+]
+```
+
