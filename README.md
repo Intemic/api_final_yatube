@@ -62,7 +62,7 @@ http://127.0.0.1:8000/redoc/
 ### Примеры запросов:
 
 **GET** api/v1/posts/
-`
+```
 {
   "count": 123,
   "next": "http://api.example.org/accounts/?offset=400&limit=100",
@@ -78,4 +78,4 @@ http://127.0.0.1:8000/redoc/
     }
   ]
 }
-`
+```
