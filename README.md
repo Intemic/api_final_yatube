@@ -59,6 +59,14 @@ python3 manage.py runserver
 http://127.0.0.1:8000/redoc/
 ```
 
+### Для реализации использовались следующие технологии:
+
+```
+- Django REST framework
+- djoser
+- Pillow
+```
+
 ### Примеры запросов:
 
 **GET** api/v1/posts/
