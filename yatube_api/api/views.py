@@ -7,7 +7,7 @@ from rest_framework.viewsets import (GenericViewSet, ModelViewSet,
                                      ReadOnlyModelViewSet)
 
 from .permissions import IsOwnerOrReadOnly
-from posts.models import Group, Post, User
+from posts.models import Group, Post
 from .serializers import (CommentSerializer, FollowSerializer, GroupSerializer,
                           PostSerializer)
 
@@ -58,7 +58,4 @@ class FollowViewSet(CreateListViewSet):
         return self.request.user.follower.all()
 
     def perform_create(self, serializer):
-        following = User.objects.get(
-            username=serializer.initial_data.get('following')
-        )
-        serializer.save(user=self.request.user, following=following)
+        serializer.save(user=self.request.user)
